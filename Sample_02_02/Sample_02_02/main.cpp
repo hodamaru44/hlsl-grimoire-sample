@@ -4,7 +4,7 @@
 // 頂点構造体
 struct SimpleVertex
 {
-    float pos[6];       // 頂点座標
+    float pos[3];       // 頂点座標
     float color[3];     // 頂点カラー
 };
 
@@ -41,17 +41,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     // 頂点配列を定義
     SimpleVertex vertices[] = {
         {
-           { -0.5f, -0.5f, 0.0f },
+            {-0.5f, -0.5f, 0.0f},
             { 0.0f, 0.0f, 0.0f }
         },
         {
-           { -0.5f, 0.5f, 0.0f },
+            {  -0.5f, 0.5f, 0.0f },
             { 0.0f, 0.0f, 0.0f }
         },
         {
-             { 0.0f, -0.5f, 0.0f },
+            { 0.0f, -0.5f, 0.0f },
             { 1.0f, 1.0f, 1.0f }
         },
+        {
+            {  0.0f, 0.5f, 0.0f },
+            { 1.0f, 1.0f, 1.0f }
+        }
+
     };
 
     VertexBuffer triangleVB;
@@ -62,9 +67,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     //インデックス配列
     uint16_t indices[] = {
         0,1,2,
+        1,2,3
     };
     IndexBuffer triangleIB;
-    triangleIB.Init(sizeof(indices), 3);
+    triangleIB.Init(sizeof(indices), 2);
     triangleIB.Copy(indices);
 
     //////////////////////////////////////
@@ -105,12 +111,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 }
 
 // ルートシグネチャの初期化
-void InitRootSignature( RootSignature& rs )
+void InitRootSignature(RootSignature& rs)
 {
     rs.Init(D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-            D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-            D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-            D3D12_TEXTURE_ADDRESS_MODE_WRAP);
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+        D3D12_TEXTURE_ADDRESS_MODE_WRAP);
 }
 
 // パイプラインステートの初期化
