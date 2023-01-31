@@ -26,14 +26,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     triangle.Init(rootSignature);
 
     // step-1 定数バッファを作成
+    ConstantBuffer cb;
+    cb.Init(sizeof(Matrix));
 
     // step-2 ディスクリプタヒープを作成
-
+    DescriptorHeap ds;
+    ds.RegistConstantBuffer(0, cb);
+    ds.Commit();
     //////////////////////////////////////
     // 初期化を行うコードを書くのはここまで！！！
     //////////////////////////////////////
     auto& renderContext = g_graphicsEngine->GetRenderContext();
-
+    int s = 0;
+       
     // ここからゲームループ
     while (DispatchWindowMessage())
     {
@@ -48,11 +53,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         renderContext.SetRootSignature(rootSignature);
 
         // step-3 ワールド行列を作成
-
+        Matrix mWorld0;
+        mWorld0.MakeTranslation(((s++) % 1000) / 1000.0f, 0.4f, 0.0f);
         // step-4 ワールド行列をグラフィックメモリにコピー
-
+        cb.CopyToVRAM(mWorld0);
         // step-5 ディスクリプタヒープを設定
-
+        renderContext.SetDescriptorHeap(ds);
         //三角形をドロー
         triangle.Draw(renderContext);
 
