@@ -2,8 +2,12 @@
 #include "system/system.h"
 #include "TrianglePolygon.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 //関数宣言
 void InitRootSignature(RootSignature& rs);
+int s = 0;
 
 ///////////////////////////////////////////////////////////////////
 // ウィンドウプログラムのメイン関数
@@ -27,18 +31,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
     // step-1 定数バッファを作成
     ConstantBuffer cb;
-    cb.Init(sizeof(Matrix));
+    cb.Init(sizeof(Matrix));  //Inint関数の引数は定数バッファーのサイズ
 
     // step-2 ディスクリプタヒープを作成
     DescriptorHeap ds;
-    ds.RegistConstantBuffer(0, cb);
-    ds.Commit();
+    ds.RegistConstantBuffer(0, cb);  //ディスクリプタヒープに定数バッファーを登録
+    ds.Commit();  //ディスクリプタヒープへの登録を確定
+
     //////////////////////////////////////
     // 初期化を行うコードを書くのはここまで！！！
     //////////////////////////////////////
     auto& renderContext = g_graphicsEngine->GetRenderContext();
-    int s = 0;
-       
+
     // ここからゲームループ
     while (DispatchWindowMessage())
     {
@@ -53,12 +57,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         renderContext.SetRootSignature(rootSignature);
 
         // step-3 ワールド行列を作成
-        Matrix mWorld0;
-        mWorld0.MakeTranslation(((s++) % 1000) / 1000.0f, 0.4f, 0.0f);
+        Matrix mWorld1, mWorld2; 
+        mWorld1.MakeTranslation(sin(((s++) % 1000) * 2 / 1000.0f * M_PI), /*cos(((s++) % 1000) * 2 / 1000.0f * M_PI)*/ 0.0f , 0.0f);
+        mWorld2.MakeRotationZ(tan(((s++) % 1000) * 2 / 100.0f * M_PI));
+        mWorld2.Multiply(mWorld2, mWorld1);
+
         // step-4 ワールド行列をグラフィックメモリにコピー
-        cb.CopyToVRAM(mWorld0);
+        cb.CopyToVRAM(mWorld2);
+
         // step-5 ディスクリプタヒープを設定
         renderContext.SetDescriptorHeap(ds);
+
         //三角形をドロー
         triangle.Draw(renderContext);
 
